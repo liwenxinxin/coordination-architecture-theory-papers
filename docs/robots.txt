@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://liwenxinxin.github.io/coordination-architecture-theory-papers/sitemap.xml
