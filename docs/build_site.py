@@ -43,17 +43,14 @@ DOCS_DIR  = REPO_ROOT / "docs"
 FEATURED_MD_DIR  = REPO_ROOT / "featured papers" / "md"
 FEATURED_PDF_DIR = REPO_ROOT / "featured papers" / "pdf"
 
-CORPUS_MD_DIR  = REPO_ROOT / "core theory and corpus papers" / "md files"
-CORPUS_PDF_DIR = REPO_ROOT / "core theory and corpus papers" / "pdf files"
-
-# The three trilogy slugs. Their PDFs/MDs are duplicated in the corpus
-# folder; we drop those duplicates from the corpus listing so each paper
-# appears only once on the site.
-TRILOGY_SLUGS = {
-    "cks_paper_1_core_theory",
-    "cks_paper_2_core_theory",
-    "cks_paper_3_core_theory",
-}
+# The corpus is no longer enumerated on the index page. Instead, the index
+# links to the GitHub folder containing the corpus PDFs. Browsers and
+# crawlers can both navigate that folder; we don't have to maintain a list
+# that grows every time a new corpus paper is added.
+CORPUS_FOLDER_URL = (
+    f"https://github.com/{REPO_OWNER}/{REPO_NAME}/tree/main/"
+    "core%20theory%20and%20corpus%20papers/pdf%20files"
+)
 
 # ---------------------------------------------------------------------------
 # Data extraction
@@ -123,17 +120,7 @@ def load_papers(md_dir: Path, pdf_dir: Path) -> list[Paper]:
     papers: list[Paper] = []
     for md in sorted(md_dir.glob("*.md")):
         slug = md.stem
-        # Strict match first: same slug.
         pdf = pdf_dir / f"{slug}.pdf"
-        # Fallback: numbered MD whose PDF was saved without the numeric
-        # prefix (e.g. 17_cks_inspect_right_standalone.md paired with
-        # cks_inspect_right_standalone.pdf).
-        if not pdf.exists():
-            stripped = re.sub(r"^\d+_", "", slug)
-            if stripped != slug:
-                alt = pdf_dir / f"{stripped}.pdf"
-                if alt.exists():
-                    pdf = alt
         title, date = extract_title_and_date(md)
         papers.append(Paper(
             slug=slug,
@@ -145,34 +132,12 @@ def load_papers(md_dir: Path, pdf_dir: Path) -> list[Paper]:
     return papers
 
 
-def numeric_prefix(slug: str) -> int | None:
-    m = re.match(r"^(\d+)_", slug)
-    return int(m.group(1)) if m else None
-
-
 # ---------------------------------------------------------------------------
 # Output: index.md
 # ---------------------------------------------------------------------------
 
-def render_paper_line(p: Paper, link_target: str = "blob") -> str:
-    """One markdown bullet for a paper. link_target = 'blob' or 'pages'."""
-    md_url  = p.github_blob_url("md")
-    pdf_url = p.github_blob_url("pdf") if p.pdf_path else ""
-    parts: list[str] = []
-    parts.append(f"**{p.title}**")
-    if p.date:
-        parts.append(f"  \n  *{p.date}*")
-    links = []
-    if pdf_url:
-        links.append(f"[PDF]({pdf_url})")
-    if md_url:
-        links.append(f"[Markdown]({md_url})")
-    if links:
-        parts.append("  \n  " + " · ".join(links))
-    return "- " + "".join(parts)
 
-
-def write_index(trilogy: list[Paper], corpus: list[Paper]) -> None:
+def write_index(trilogy: list[Paper]) -> None:
     lines: list[str] = []
     lines.append("---")
     lines.append("layout: default")
@@ -217,18 +182,17 @@ def write_index(trilogy: list[Paper], corpus: list[Paper]) -> None:
     lines.append("---")
     lines.append("")
 
-    # Corpus — everything else, bundled together.
-    if corpus:
-        lines.append("## Corpus Papers")
-        lines.append("")
-        lines.append(f"Standalone treatments of each architectural commitment, "
-                     f"integrating frame, sub-claim, composition, and "
-                     f"anti-pattern in the CKS pattern. {len(corpus)} papers.")
-        lines.append("")
-        for p in corpus:
-            lines.append(render_paper_line(p))
-        lines.append("")
-
+    # Corpus — single browse link, no enumeration, no count.
+    lines.append("## Corpus Papers")
+    lines.append("")
+    lines.append("Standalone deep-dive treatments — one paper per "
+                 "architectural commitment, integrating frame, sub-claim, "
+                 "composition, and anti-pattern in the CKS pattern. Each "
+                 "paper formalizes one aspect of the framework in "
+                 "operational depth.")
+    lines.append("")
+    lines.append(f"[Browse the full corpus on GitHub →]({CORPUS_FOLDER_URL})")
+    lines.append("")
     lines.append("---")
     lines.append("")
     lines.append("## Source Repository")
@@ -405,13 +369,16 @@ def write_trilogy_landing_pages(featured: list[Paper]) -> None:
 # ---------------------------------------------------------------------------
 
 def write_jekyll_config() -> None:
-    base_url = f"https://{REPO_OWNER}.github.io/{REPO_NAME}"
+    # Jekyll concatenates url + baseurl + page path to build absolute URLs
+    # (in the sitemap, canonical tags, etc.), so `url` must be host-only.
+    # Putting the repo name in both produces doubled paths.
+    site_host = f"https://{REPO_OWNER}.github.io"
     config = f"""\
 # Auto-generated by docs/build_site.py — edit and re-run if needed.
 title: "{SITE_TITLE}"
 description: "{SITE_DESC}"
 author: "{AUTHOR_NAME}"
-url: "{base_url}"
+url: "{site_host}"
 baseurl: "/{REPO_NAME}"
 
 theme: minima
@@ -443,42 +410,59 @@ def write_readme() -> None:
     body = """\
 # docs/
 
-This folder is the source for the GitHub Pages site that indexes every
-paper in this repository for search engines (especially Google Scholar
-and Perplexity-style retrieval systems).
+This folder is the source for the GitHub Pages site that indexes the
+trilogy of foundational papers for search engines (especially Google
+Scholar and Perplexity-style retrieval systems).
 
 ## Layout
 
-- `index.md` — auto-generated landing page listing every paper.
+- `index.md` — auto-generated landing page. Lists the trilogy with
+  full link metadata, and a single browse link to the corpus folder
+  on GitHub.
 - `papers/paper-{1,2,3}.html` — auto-generated landing pages for the
   trilogy with full Google Scholar `citation_*` metadata.
 - `_config.yml` — Jekyll configuration.
 - `robots.txt` — allows all crawlers; advertises the sitemap.
-- `build_site.py` — regenerator. Re-run after adding new papers.
+- `build_site.py` — regenerator. Re-run only when you publish a new
+  trilogy paper (rare). Corpus papers do not require re-running.
 
-## Regenerating after adding papers
+## Adding new corpus papers
 
-```bash
-python3 docs/build_site.py
-git add docs/
-git commit -m "Rebuild docs index"
-git push
-```
+Drop new `.md` and `.pdf` files into
+`core theory and corpus papers/md files/` and
+`core theory and corpus papers/pdf files/`, then commit and push.
 
-## One-time setup
+The index page does not list corpus papers individually — it links to
+the corpus folder on GitHub, which auto-updates as you add files. No
+script run required.
+
+## Adding a new trilogy paper
+
+1. Add the new `.md` and `.pdf` to `featured papers/md/` and
+   `featured papers/pdf/`.
+2. Open `docs/build_site.py` and add the new file's slug (filename
+   without extension) to the comments and any logic that references
+   the trilogy.
+3. Run:
+   ```bash
+   python3 docs/build_site.py
+   git add docs/
+   git commit -m "Add trilogy paper N"
+   git push
+   ```
+
+## One-time setup (already done if the site is live)
 
 1. Push this folder to `main`.
 2. In the repository on GitHub: **Settings -> Pages**.
-3. Set **Source** to `Deploy from a branch`, **Branch** to `main`, **Folder** to `/docs`. Save.
-4. Wait ~1 minute. The site will be live at
-   `https://liwenxinxin.github.io/coordination-architecture-theory-papers/`.
-5. Verify the site in [Google Search Console](https://search.google.com/search-console)
-   using the HTML meta tag method (paste it into `_config.yml` under a
-   `google_site_verification:` key, or drop the verification HTML file
-   into `docs/`).
-6. Submit the sitemap URL `…/sitemap.xml` in Search Console.
-7. For Google Scholar specifically: no submission needed — Scholar
-   crawls discovered HTML pages with `citation_*` meta tags. The trilogy
+3. Set **Source** to `Deploy from a branch`, **Branch** to `main`,
+   **Folder** to `/docs`. Save.
+4. Verify the site in [Google Search Console](https://search.google.com/search-console)
+   and [Bing Webmaster Tools](https://www.bing.com/webmasters) using
+   the verification files dropped into this folder.
+5. Submit `sitemap.xml` in both consoles.
+6. For Google Scholar: no submission needed — Scholar crawls
+   discovered HTML pages with `citation_*` meta tags. The trilogy
    landing pages have those tags. Indexing typically takes 2–8 weeks.
 """
     (DOCS_DIR / "README.md").write_text(body, encoding="utf-8")
@@ -493,24 +477,7 @@ def main() -> None:
     trilogy = load_papers(FEATURED_MD_DIR, FEATURED_PDF_DIR)
     print(f"Trilogy papers found: {len(trilogy)}")
 
-    raw_corpus = load_papers(CORPUS_MD_DIR, CORPUS_PDF_DIR)
-    # Drop the trilogy duplicates that also live in the corpus folder.
-    corpus = [p for p in raw_corpus if p.slug not in TRILOGY_SLUGS]
-    print(f"Corpus papers found:   {len(corpus)} "
-          f"(dropped {len(raw_corpus) - len(corpus)} trilogy duplicates)")
-
-    # Sort: numbered papers in numeric order first (they're the deep-dive
-    # sequence and have a defined reading order), then named papers
-    # alphabetically by slug.
-    def sort_key(p: Paper) -> tuple[int, int, str]:
-        n = numeric_prefix(p.slug)
-        if n is not None:
-            return (0, n, p.slug)
-        return (1, 0, p.slug)
-
-    corpus.sort(key=sort_key)
-
-    write_index(trilogy, corpus)
+    write_index(trilogy)
     print("Wrote docs/index.md")
 
     write_trilogy_landing_pages(trilogy)
