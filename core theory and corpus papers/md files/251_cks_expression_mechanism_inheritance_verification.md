@@ -1,0 +1,143 @@
+# Expression Mechanism Inheritance Verification in the Coordination Knowledge Substrate Pattern
+
+**Author:** Wenxin Li (Independent Researcher)
+**ORCID:** 0009-0004-8065-3235
+**Date:** May 12, 2026
+**License:** Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+---
+
+## Attribution
+
+This work derives from and formalizes the instinct/reasoning separation pattern introduced in "The Instinct/Reasoning Separation Outside the Model" (Li, April 2026), the second paper in the CKS theory series following "Coordination Outside the Model: A Human-Governed Substrate Pattern for AI Systems" (Li, April 2026). It does not introduce new axioms. Its sole contribution is to formalize how Series A's operational tests A5.01–A5.16 apply to the expression mechanism components — harness substrate, activation patterns, carry-strategy, and expression evolution — within cell-level verification per B2.14, ensuring Paper 1 commitments hold at expression mechanism scope per B1.20 recursive inheritance. This note closes the five-note B1.07 expression mechanism decomposition (B2.30–B2.34).
+
+## Abstract
+
+The Coordination Knowledge Substrate (CKS) pattern's Paper 2 specifies that Paper 1 commitments hold recursively at every architectural level per B1.20. Cell-level verification per B2.14 operationalizes this recursion by applying Series A operational tests at cell scope. This note formalizes the component-scope refinement of that verification for the expression mechanism: how the same A5.01–A5.16 test suite applies to the four expression mechanism components identified in the B1.07 decomposition — harness substrate (B2.30), activation patterns (B2.31), carry-strategy specification (B2.32), and expression evolution (B2.33) — each with component-distinct test semantics. The note states the architectural verification precisely, explains what makes expression-mechanism-scope verification architecturally distinctive, identifies the inherited Paper 1 commitments with expression-distinct meanings, maps each relevant A5-series test to its expression-component artifact, states the operational triggers and governance implications, and articulates what the verification does not cover. The note closes the B1.07 decomposition and establishes the prior-art record for expression mechanism inheritance verification as a named operational pattern.
+
+## 1. Why expression mechanism inheritance verification needs to be formalized as standalone
+
+Paper 2 specifies the expression mechanism — the governed selection over DNA-layer activation — through the B1.07 decomposition, which the prior four notes have formalized in component form: B2.30 defined the harness substrate as the expression governor; B2.31 defined DNA activation patterns; B2.32 defined carry-strategy specification as the deployment design choice over DNA carriage; B2.33 defined expression evolution and its governance. Each note specifies an architectural commitment that Paper 2 defends. What the prior four notes do not formalize is how those commitments are *verified* — how a CKS deployment establishes that its expression mechanism satisfies the inherited Paper 1 commitments, and does so operationally rather than by assertion.
+
+The gap is architecturally consequential. Paper 2 inherits Paper 1's commitments through the recursion B1.20 establishes: every architectural level, including the expression mechanism components within cells, must satisfy the same governance, determinism, retraceability, source-of-truth, and human-governed commitments Paper 1 defends at cell level. Cell-level verification per B2.14 operationalizes this recursion at cell scope. But cell-level verification, as specified, applies the Series A test suite to the cell as a whole. The expression mechanism components — harness substrate, activation pattern specifications, carry-strategy configurations, expression evolution rules — are cell-internal artifacts that require component-distinct test application to verify their specific Paper 1 inheritance.
+
+Without expression-mechanism-scope verification, the harness substrate's governance properties are architecturally claimed but not operationally testable as claimed. The expression mechanism can be described as human-governed, deterministic, and retraceable; if no test applies to the harness substrate specifically, those descriptions remain unverified claims. Naming expression mechanism inheritance verification as a standalone operational pattern is what transforms the description into a testable architectural commitment and anchors the prior-art record for this verification scope.
+
+The note's position as the closing note of the B1.07 decomposition is deliberate: component specifications (B2.30–B2.33) precede component verification (B2.34) in the derivation sequence, and all four specifications must be in place before their verification semantics can be stated with precision.
+
+## 2. The architectural verification precisely stated
+
+Expression mechanism inheritance verification is the application of Series A operational tests A5.01–A5.16 to the expression mechanism components within a cell, operating within cell-level verification per B2.14, with component-distinct semantics that reflect the specific artifacts each component contributes to the cell. The verification has four component scopes and three temporal triggers.
+
+**Component scopes.** The verification covers four component classes, corresponding to the four prior B1.07 decomposition notes:
+
+- *Harness substrate verification* applies the test suite to the harness substrate as specified in B2.30 — the human-governed, fully inspectable, modifiable, and overridable substrate that selects which DNA-layer sub-substrates are active for the current cell goal.
+- *Activation pattern verification* applies relevant tests to the activation pattern specifications as formalized in B2.31 — the specifications that determine which DNA activation pattern (full-DNA-with-selective-expression or partial-DNA-slice) a cell employs.
+- *Carry-strategy verification* applies relevant tests to the carry-strategy configuration as formalized in B2.32 — the deployment design choice over how much of the Self's DNA the cell carries.
+- *Expression evolution verification* applies relevant tests to the expression evolution rules as formalized in B2.33 — the governed mechanisms by which activation rules and carry-strategy configurations change over the cell's lifecycle.
+
+**Temporal triggers.** Verification runs at three moments in the cell lifecycle. First, at cell birth: when a cell is created under governed origination, its expression mechanism is verified before the cell operates; this ensures that harness substrate, activation patterns, carry-strategy configuration, and expression evolution rules satisfy the inherited Paper 1 commitments from the outset. Second, at expression evolution: when expression rules evolve per B2.33 — when activation rules change, carry-strategy migrates, or expression conditions are modified — the evolved components are re-verified; this ensures evolution does not degrade the inherited commitments. Third, at carry-strategy migration: when the deployment design choice over DNA carriage changes per B2.32, the migrated carry-strategy configuration is verified; this ensures that substrate-technology migration events do not compromise expression mechanism properties.
+
+**Verification governance.** The verification is governed per A1.01: the human-governed commitment applies to the verification substrate itself. Verification events are recorded per A2.40 provenance requirements. Failures trigger governance per A2.03 or A2.04. All four component scopes must pass for the cell's expression mechanism verification to pass, and cell verification per B2.14 requires expression mechanism verification to pass as one of its components.
+
+## 3. What makes expression mechanism inheritance verification architecturally distinctive
+
+Conventional AI component architectures frequently verify component-level properties — correctness, performance, interface conformance — at component scope without extending a standard architectural test suite below the system or service level. Component-level testing exists; what does not is the recursive extension of the same governance-oriented test suite to sub-component artifacts within cells. Expression mechanism inheritance verification is distinctive in three respects.
+
+**Recursive test suite extension.** The Series A operational tests were specified at the architectural level Paper 1 defends. B2.14 extends them to cell scope. B2.29 extends them to the DNA and Action layers within cells. B2.34 extends them further, to the expression mechanism components within cells. The test *specifications* do not change; the *artifacts under test* change at each scope. The same test specification — A5.01 inspect right — verifies different artifacts depending on scope: at cell level, it verifies cell substrate content generally; at expression mechanism scope, it verifies that a human with appropriate access can read harness substrate content — activation rules, carry-strategy configuration, expression conditions — directly and without LLM intermediation as a precondition. The architectural move is the recursive extension, not the introduction of new tests.
+
+**Operationalizing the B1.07 specification.** The expression mechanism is specified by B1.07 and decomposed by B2.30–B2.33. Those notes establish architectural commitments. B2.34 is what makes those commitments operationally demonstrable. Without expression-scope verification, a deployment can claim that its harness substrate is human-governed; it cannot demonstrate, through a standard architectural test, that the claim holds. Expression mechanism inheritance verification converts the claimed commitments of B2.30–B2.33 into testable architectural properties within the broader cell-level verification framework.
+
+**Economic commitment at expression scope.** Paper 1's A1.06 linear-cost commitment — that operational cost scales linearly with substrate size, not super-linearly — applies at every level per B1.20. At expression mechanism scope, this means the carry-strategy design choice per B2.32 must not introduce super-linear cost scaling. A5.12 linear-cost verification at carry-strategy scope is what verifies this. A deployment that selects a carry-strategy — full-DNA carriage or partial-DNA-slice — must verify that its selection respects the linear-cost commitment. This connection between the expression scope verification and Paper 1's economic commitment is architecturally load-bearing: expression mechanism verification is not only governance verification but also economic architecture verification.
+
+## 4. Inherited Paper 1 commitments at expression scope
+
+B1.20 establishes that Paper 1 commitments hold recursively at every level of the CKS architecture. At expression mechanism scope, the inherited commitments carry expression-distinct operational meanings.
+
+**A1.10 determinism at harness substrate scope.** Paper 1's determinism commitment requires that substrate content, once written under appropriate authority, is what the substrate carries until written again under appropriate authority. At expression mechanism scope, this means the harness substrate must produce deterministic activation given the same expression conditions: the same cell goal presented to the same harness configuration must select the same active sub-substrates. A5.06 cell-behavior-determinism verifies this at expression scope. A harness substrate that selects nondeterministically — producing different active sub-substrate sets from identical inputs without a governed change to the harness configuration — fails A1.10 at expression scope.
+
+**A1.07 retraceability at activation event scope.** Paper 1's retraceability commitment requires that every path through the substrate's state changes be retraceable after the fact. At expression mechanism scope, this means activation events — instances of the harness substrate selecting which sub-substrates are active for a given cell goal — must be recorded with sufficient provenance to reconstruct the activation path. A5.08 provenance-completeness and A5.09 four-accountability-questions verify this: who or what triggered the activation, which harness rules applied, when the activation occurred, and why the rules produced the selection they did must all be answerable from the recorded substrate state.
+
+**A2.46 Category 4 source-of-truth at harness scope.** Paper 1's source-of-truth commitment names five categories of substrate authority. Category 4 — what rules apply — covers the orchestration rules that govern cell behavior. At expression mechanism scope, the harness substrate is the authoritative source of truth for which activation rules apply to this cell and under what conditions. A5.10 source-of-truth-five-categories verifies this: the harness substrate content, not LLM inference or runtime middleware state, is the authoritative record of which expression rules are in effect.
+
+**A6.02 retroactivity at expression evolution scope.** Paper 1's retroactivity boundary commitment governs how changes to substrate content interact with prior state. At expression evolution scope, this means that when harness substrate content changes — when activation rules are refined, carry-strategy is modified, or expression conditions are updated — the change does not silently rewrite historical activation events. A5.16 reproducibility verifies this: an expression evolution event must be recordable as a governed change with its own provenance, leaving prior expression behavior reconstructable from the historical substrate state.
+
+**A1.01 human-governed at expression mechanism scope.** The human-governed commitment applies to the harness substrate specifically: the harness substrate is itself human-governed — fully inspectable, modifiable, and overridable. A5.01 inspect right verifies that a human with appropriate access can read harness substrate content directly. A5.02 modify right verifies that harness modification follows directed selection per B1.14. A5.04 rule authoring verifies that harness content — the activation rules and expression conditions — was authored per A2.04 authority requirements.
+
+## 5. Component-distinct test semantics
+
+The following maps the most directly relevant A5-series tests to their expression-component-distinct application, making explicit how the same test specification produces different verification targets at expression mechanism scope.
+
+**A5.01 inspect right at harness substrate scope** verifies that a human with appropriate access can read the harness substrate's content directly: the activation rules that govern which DNA-layer sub-substrates are selected, the carry-strategy configuration, and the expression conditions under which different selections apply. The content under test is the harness substrate, not the DNA-layer sub-substrates the harness governs. An expression mechanism in which activation rules are encoded in non-human-readable form, retrievable only through LLM intermediation, fails A5.01 at this scope.
+
+**A5.07 read-determinism at activation pattern scope** verifies that reads of activation pattern specifications are consistent: a human or governed process reading the activation pattern configuration at two different times without an intervening governed write must read the same content. This verifies that the activation pattern specification is held in the substrate's authoritative state per A1.10, not in a volatile cache or runtime inference artifact.
+
+**A5.02 modify right at carry-strategy scope** verifies that carry-strategy migration — a change from full-DNA-with-selective-expression to partial-DNA-slice, or the reverse — is effected through directed selection per B1.14, not through unilateral LLM action. The carry-strategy configuration is substrate content; modifying it requires the modify right to be exercisable by a human with appropriate authority.
+
+**A5.08 provenance-completeness at expression evolution scope** verifies that expression evolution events — changes to harness activation rules, carry-strategy configurations, or expression conditions — carry complete provenance per A2.40: originator, timestamp, governing rule or authority, and the prior state the change supersedes. An evolution event without provenance is not retraceable, which fails A1.07 at this scope.
+
+**A5.12 linear-cost-scaling at carry-strategy scope** verifies that the carry-strategy design choice does not introduce super-linear operational cost scaling. A cell configured for full-DNA carriage with selective expression must verify that its expression overhead scales linearly with substrate size, not with the square of it. This test connects the expression mechanism design choice directly to Paper 1's economic commitment.
+
+**A5.13 conflict-coexistence at cross-component scope** verifies that no expression mechanism conflict violates Paper 1's conflict preservation commitment per A1.03. Expression mechanism components can produce conflicts — a harness activation rule can conflict with a carry-strategy constraint, or two activation pattern specifications can select different active sub-substrates for the same goal. Such conflicts are first-class substrate state, not errors to be silently resolved. A5.13 verifies that expression mechanism conflicts are preserved as substrate content, with full provenance, rather than silently merged.
+
+**A5.05 mediator role test at expression processing scope** verifies that any LLM consultation during expression processing respects the AI-as-substrate-mediator commitment per A2.18–A2.23. If the harness substrate delegates any expression decision to an LLM — for example, using LLM inference to evaluate whether an expression condition is met — the LLM must operate as substrate mediator, not as autonomous decision maker. The harness substrate remains the authoritative record of which sub-substrates are active; LLM consultation is input to governed selection, not a substitute for it.
+
+## 6. Operational implications
+
+**Configuration per cell type and expression complexity.** B2.14's cell-level verification framework allows deployments to configure test parameters per cell type. At expression mechanism scope, this means deployments configure verification parameters per cell type and per the complexity of that cell's expression mechanism: a cell with a simple single-rule harness substrate and a fixed partial-DNA-slice carry-strategy requires simpler verification configuration than a cell with a multi-condition harness substrate and an evolvable carry-strategy. The A5-series test specifications are invariant; the parameters — what content is under test, what constitutes a pass, how frequently re-verification triggers — are deployment-configured.
+
+**High-stakes deployment support.** Expression mechanism inheritance verification is particularly load-bearing for high-stakes deployments that rely on pinning per B1.13. When pinning directs cells to DNA-specified behavior as a governance-critical constraint, the expression mechanism must be verified to activate the correct DNA-layer sub-substrates under the pinned conditions. Expression mechanism verification ensures that the harness substrate's activation rules, as written, produce the pinned behavior; that the carry-strategy carries the required DNA-layer content; and that expression evolution does not degrade the pinning guarantee. Without expression-scope verification, pinning guarantees are architecturally claimed but not operationally confirmed.
+
+**Cross-partner verification via A2.47.** Where cells operate under cross-partner authority distribution, expression mechanism verification follows A2.47 authority requirements: verification authority is distributed according to the same governance structure that governs harness substrate modification. A partner with modify authority over a cell's harness substrate holds expression mechanism verification authority for that component; cross-partner verification events are recorded with cross-partner provenance.
+
+**Failure handling.** Verification failures at expression mechanism scope trigger governance per A2.03 (for cases where the failure indicates a harness substrate modification that was not effected through appropriate authority) or A2.04 (for cases where the failure indicates that a harness rule was authored outside the required authority structure). Failures do not automatically invalidate the cell; they trigger the governed remediation pathway, which may include harness correction, re-verification, or escalation to human authority per A1.01.
+
+## 7. Limits
+
+**Does not replace cell-level or layer-level verification.** Expression mechanism inheritance verification operates within cell-level verification per B2.14 and is one component of it; it does not replace it. Cell-level verification covers the cell as a whole, including its DNA-layer content and action-layer content. Layer-level verification per B2.29 covers the DNA and Action layers as architectural layers. Expression mechanism verification covers the expression mechanism components — harness substrate, activation patterns, carry-strategy, expression evolution — within the cell. The three verification scopes are nested, not substitutable.
+
+**Does not cover DNA content or Action records directly.** The harness substrate governs which DNA-layer sub-substrates are active; it does not govern their content. DNA-layer content verification — whether the orchestration substrates, behavior substrates, and schemas the DNA layer carries satisfy the inherited Paper 1 commitments — is covered by B2.25 and B2.29's two-layer verification, not by B2.34. Action-layer record verification is similarly covered by B2.26 and B2.29. B2.34 covers the expression mechanism, which governs activation selection; it does not cover the content that is selected.
+
+**Does not prescribe specific test parameters.** The note formalizes which A5-series tests apply to which expression mechanism components with which component-distinct semantics. It does not prescribe what constitutes a passing configuration for any specific deployment. Deployments configure test parameters per cell type, expression complexity, governance requirements, and domain constraints. The verification framework is invariant; the parameter space is deployment-specified.
+
+**Does not guarantee expression correctness.** Expression mechanism inheritance verification verifies that the harness substrate satisfies the inherited Paper 1 commitments — that it is human-governed, deterministic, retraceable, and authoritative as a source of truth. It does not verify that the harness substrate selects the *correct* DNA-layer sub-substrates for a given cell goal in any domain-specific sense. Domain-level correctness is outside the scope of the architectural test suite; it is a deployment concern governed by domain-specific orchestration rules and evaluated through domain-specific validation.
+
+**Does not eliminate B2.06 verification gates for instinct.** B2.06 formalizes verification gates for LLM instinct behavior — corrective signals and verification substrates that govern how instinct integrates into cell behavior. Those verification gates verify LLM behavior at the instinct boundary. Expression mechanism inheritance verification verifies the harness substrate and expression components, which govern DNA-layer activation on the reasoning side of the instinct/reasoning separation. The two verification scopes address different architectural layers; neither substitutes for the other.
+
+**Is not a single test.** Expression mechanism inheritance verification is the application of A5.01–A5.16 with expression-component-distinct semantics. It is a framework for applying an existing test suite at a finer architectural scope, not a new single-artifact test. Deployments run the individual A5-series tests against the relevant expression mechanism artifacts and aggregate results per the cell-level verification framework of B2.14.
+
+## 8. Operational test
+
+An expression mechanism satisfies expression mechanism inheritance verification if and only if all of the following hold at all times during the cell's existence:
+
+1. A human with appropriate access can read harness substrate content — activation rules, carry-strategy configuration, expression conditions — directly and without LLM intermediation as a precondition (A5.01 at harness scope).
+2. Harness substrate modifications, including carry-strategy migration, are effected through directed selection with governed authority and recorded with complete provenance per A2.40 (A5.02 at harness and carry-strategy scope; A5.08 at evolution scope).
+3. The harness substrate produces deterministic activation for identical inputs given the same harness configuration: the same cell goal produces the same active sub-substrate selection without a governed harness change (A5.06 at harness scope; A5.07 at activation pattern scope).
+4. The harness substrate is the authoritative source of truth for which activation rules apply to this cell; its content is not superseded by LLM inference or runtime middleware state (A5.10 at harness scope).
+5. The carry-strategy design choice does not introduce super-linear operational cost scaling (A5.12 at carry-strategy scope).
+6. Expression mechanism conflicts — including conflicts between harness activation rules and carry-strategy constraints — are preserved as first-class substrate state with full provenance, not silently resolved (A5.13 at cross-component scope).
+7. Expression evolution events carry complete provenance and do not degrade the reproducibility of prior expression behavior (A5.08 and A5.16 at evolution scope).
+
+A cell whose expression mechanism fails any of (1)–(7) does not satisfy expression mechanism inheritance verification, even if the cell satisfies cell-level verification per B2.14 on other dimensions. Such a cell is not CKS-coherent on the expression verification axis for the scope the failing test covers, and downstream work that relies on its expression guarantees should be scoped accordingly.
+
+## 9. Closing the B1.07 decomposition
+
+This note closes the five-note B1.07 expression mechanism decomposition that Phase B2 has developed across B2.30–B2.34. The sequence has formalized the expression mechanism in the order: what the harness substrate is and what governance commitments it carries (B2.30); what DNA activation patterns are and how they differ architecturally (B2.31); what carry-strategy specification is and how the deployment design choice over DNA carriage is governed (B2.32); what expression evolution is and how it is governed across the cell lifecycle (B2.33); and, finally, how Paper 1 commitments are inherited and verified at expression mechanism scope (B2.34, this note).
+
+The five-note sequence is complete as an architectural derivation: component specification (B2.30–B2.33) is followed by inheritance verification (B2.34), closing the loop between the architectural specification of expression mechanism and the operational verification that the specification's commitments hold. The prior-art record for expression mechanism inheritance verification is established as of this note.
+
+Naming the verification as standalone is what gives downstream implementers a precise specification of what their expression mechanism verification must cover, independent of how cell-level verification or layer-level verification is handled. Deployments that claim CKS coherence at expression mechanism scope can specify, test against, and demonstrate the seven-point verification stated in §8. Subsequent work that implements, extends, or argues against the expression mechanism verification commitment should use the scope and component-distinct semantics formalized here.
+
+Phase B2 continues with B2.35, beginning the B1.08 modularity from architectural commitment decomposition — the formalization of how death as governed retirement with two distinct types is operationally decomposed and verified within the CKS architecture.
+
+---
+
+## Source papers
+
+Li, W. (2026). *Coordination Outside the Model: A Human-Governed Substrate Pattern for AI Systems.* April 2026. ORCID: 0009-0004-8065-3235.
+
+Li, W. (2026). *The Instinct/Reasoning Separation Outside the Model.* April 2026. ORCID: 0009-0004-8065-3235.
+
+## How to cite this note
+
+Li, W. (2026). *Expression Mechanism Inheritance Verification in the Coordination Knowledge Substrate Pattern.* May 12, 2026. ORCID: 0009-0004-8065-3235.
